@@ -79,7 +79,7 @@ export function uploadFile({
   settings,
   client,
   file,
-  filename = file.name
+  filename = file.name,
 }: {
   settings: MuxNewAssetSettings
   client: SanityClient
@@ -257,12 +257,12 @@ export function testUrl(url: string): Observable<string> {
   return of(url)
 }
 
-function optionsFromFile(opts: {preserveFilename?: boolean}, file: File, filename?:string) {
+function optionsFromFile(opts: {preserveFilename?: boolean}, file: File, filename?: string) {
   if (typeof window === 'undefined' || !(file instanceof window.File)) {
     return undefined
   }
   return {
-    name: opts.preserveFilename === false ? undefined : (filename ?? file.name),
+    name: opts.preserveFilename === false ? undefined : filename ?? file.name,
     type: file.type,
   }
 }

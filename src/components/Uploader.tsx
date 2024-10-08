@@ -182,7 +182,7 @@ export default function Uploader(props: Props) {
           client: props.client,
           file: stagedUpload.files[0],
           settings,
-          filename
+          filename,
         }).pipe(
           takeUntil(
             cancelUploadButton.observable.pipe(
@@ -318,7 +318,7 @@ export default function Uploader(props: Props) {
       <UploadProgress
         onCancel={cancelUploadButton.handleClick}
         progress={uploadStatus.progress}
-        filename={uploadStatus.filename ||uploadStatus.file?.name || uploadStatus.url}
+        filename={uploadStatus.filename || uploadStatus.file?.name || uploadStatus.url}
       />
     )
   }
@@ -340,7 +340,6 @@ export default function Uploader(props: Props) {
   let tone: CardTone | undefined
   if (dragState) tone = dragState === 'valid' ? 'positive' : 'critical'
 
-
   return (
     <>
       <UploadCard
@@ -356,20 +355,20 @@ export default function Uploader(props: Props) {
           <Stack space={4}>
             <Text size={3}>{props.asset.filename}</Text>
             <Player
-            readOnly={props.readOnly}
-            asset={props.asset}
-            onChange={props.onChange}
-            buttons={
-              <PlayerActionsMenu
-                asset={props.asset}
-                dialogState={props.dialogState}
-                setDialogState={props.setDialogState}
-                onChange={props.onChange}
-                onSelect={handleUpload}
-                readOnly={props.readOnly}
-              />
-            }
-          />
+              readOnly={props.readOnly}
+              asset={props.asset}
+              onChange={props.onChange}
+              buttons={
+                <PlayerActionsMenu
+                  asset={props.asset}
+                  dialogState={props.dialogState}
+                  setDialogState={props.setDialogState}
+                  onChange={props.onChange}
+                  onSelect={handleUpload}
+                  readOnly={props.readOnly}
+                />
+              }
+            />
           </Stack>
         ) : (
           <UploadPlaceholder

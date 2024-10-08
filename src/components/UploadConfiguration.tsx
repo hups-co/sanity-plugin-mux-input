@@ -1,5 +1,17 @@
 import {DocumentVideoIcon, UploadIcon} from '@sanity/icons'
-import {Box, Button, Card, Checkbox, Dialog, Flex, Label, Radio, Stack, Text, TextInput} from '@sanity/ui'
+import {
+  Box,
+  Button,
+  Card,
+  Checkbox,
+  Dialog,
+  Flex,
+  Label,
+  Radio,
+  Stack,
+  Text,
+  TextInput,
+} from '@sanity/ui'
 import {uuid} from '@sanity/uuid'
 import LanguagesList from 'iso-639-1'
 import {useEffect, useId, useReducer, useRef, useState} from 'react'
@@ -140,7 +152,9 @@ export default function UploadConfiguration({
       text_tracks: autoTextTracks,
     } as UploadConfig
   )
-  const [filename, setFilename] = useState(stagedUpload.type === 'file' ? stagedUpload.files[0].name : undefined)
+  const [filename, setFilename] = useState(
+    stagedUpload.type === 'file' ? stagedUpload.files[0].name : undefined
+  )
 
   // If user-provided config is disabled,
   // begin the upload immediately with
@@ -180,12 +194,15 @@ export default function UploadConfiguration({
             <DocumentVideoIcon fontSize="2em" />
             <Stack space={2}>
               {stagedUpload.type === 'file' ? (
-                <TextInput value={filename}
-                           onChange={(event) => setFilename(event.currentTarget.value)
-                }/>)
-                : (<Text textOverflow="ellipsis" as="h2" size={3}>
-              {stagedUpload.url}
-            </Text>)}
+                <TextInput
+                  value={filename}
+                  onChange={(event) => setFilename(event.currentTarget.value)}
+                />
+              ) : (
+                <Text textOverflow="ellipsis" as="h2" size={3}>
+                  {stagedUpload.url}
+                </Text>
+              )}
 
               <Text as="p" size={1} muted>
                 {stagedUpload.type === 'file'

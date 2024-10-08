@@ -100,11 +100,7 @@ function PlayerActionsMenu(
                 Edit
               </Label>
             </Box>
-            <MenuItem
-              icon={EditIcon}
-              text="Details"
-              onClick={() => setDialogState('edit-video')}
-            />
+            <MenuItem icon={EditIcon} text="Details" onClick={() => setDialogState('edit-video')} />
             <Box padding={2}>
               <Label muted size={1}>
                 Replace
