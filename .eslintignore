@@ -3,3 +3,4 @@
 lib
 lint-staged.config.js
 package.config.ts
+dist/

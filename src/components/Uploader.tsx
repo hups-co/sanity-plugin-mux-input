@@ -387,7 +387,7 @@ export default function Uploader(props: Props) {
           setDialogState={props.setDialogState}
         />
       )}
-      {props.dialogState === 'edit-video' && props.asset != null && (
+      {props.dialogState === 'edit-video' && props.asset !== null && props.asset !== undefined && (
         <VideoDetails
           closeDialog={() => props.setDialogState(false)}
           asset={props.asset}
