@@ -1,5 +1,5 @@
 import {ErrorOutlineIcon} from '@sanity/icons'
-import {Button, CardTone, Flex, Text, useToast} from '@sanity/ui'
+import {Button, CardTone, Flex, Stack, Text, TextInput, useToast} from '@sanity/ui'
 import React, {useEffect, useReducer, useRef, useState} from 'react'
 import {type Observable, Subject, Subscription} from 'rxjs'
 import {takeUntil, tap} from 'rxjs/operators'
@@ -24,6 +24,9 @@ import UploadConfiguration from './UploadConfiguration'
 import {UploadCard} from './Uploader.styled'
 import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
+import FileNameForm from './FileNameForm'
+import VideoDetails from './VideoDetails/VideoDetails'
+import FormField from './FormField'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: PluginConfig
@@ -41,6 +44,7 @@ type UploadStatus = {
   file?: {name: string | undefined; type: string}
   uuid?: string
   url?: string
+  filename?: string
 }
 
 interface State {
@@ -159,7 +163,7 @@ export default function Uploader(props: Props) {
    * @param settings The Mux new_asset_settings object to send to Sanity
    * @returns
    */
-  const startUpload = (settings: MuxNewAssetSettings) => {
+  const startUpload = (settings: MuxNewAssetSettings, filename?: string) => {
     const {stagedUpload} = state
     if (!stagedUpload || uploadRef.current) return
     dispatch({action: 'commitUpload'})
@@ -178,6 +182,7 @@ export default function Uploader(props: Props) {
           client: props.client,
           file: stagedUpload.files[0],
           settings,
+          filename
         }).pipe(
           takeUntil(
             cancelUploadButton.observable.pipe(
@@ -313,7 +318,7 @@ export default function Uploader(props: Props) {
       <UploadProgress
         onCancel={cancelUploadButton.handleClick}
         progress={uploadStatus.progress}
-        filename={uploadStatus.file?.name || uploadStatus.url}
+        filename={uploadStatus.filename ||uploadStatus.file?.name || uploadStatus.url}
       />
     )
   }
@@ -335,6 +340,7 @@ export default function Uploader(props: Props) {
   let tone: CardTone | undefined
   if (dragState) tone = dragState === 'valid' ? 'positive' : 'critical'
 
+
   return (
     <>
       <UploadCard
@@ -347,7 +353,9 @@ export default function Uploader(props: Props) {
         ref={containerRef}
       >
         {props.asset ? (
-          <Player
+          <Stack space={4}>
+            <Text size={3}>{props.asset.filename}</Text>
+            <Player
             readOnly={props.readOnly}
             asset={props.asset}
             onChange={props.onChange}
@@ -362,6 +370,7 @@ export default function Uploader(props: Props) {
               />
             }
           />
+          </Stack>
         ) : (
           <UploadPlaceholder
             hovering={dragState !== null}
@@ -377,6 +386,13 @@ export default function Uploader(props: Props) {
           asset={props.asset}
           onChange={props.onChange}
           setDialogState={props.setDialogState}
+        />
+      )}
+      {props.dialogState === 'edit-video' && props.asset != null && (
+        <VideoDetails
+          closeDialog={() => props.setDialogState(false)}
+          asset={props.asset}
+          placement="input"
         />
       )}
     </>

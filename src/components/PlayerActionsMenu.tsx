@@ -1,4 +1,5 @@
 import {
+  EditIcon,
   EllipsisHorizontalIcon,
   EllipsisVerticalIcon,
   LockIcon,
@@ -94,6 +95,16 @@ function PlayerActionsMenu(
         animate
         content={
           <Menu ref={setMenuRef}>
+            <Box padding={2}>
+              <Label muted size={1}>
+                Edit
+              </Label>
+            </Box>
+            <MenuItem
+              icon={EditIcon}
+              text="Details"
+              onClick={() => setDialogState('edit-video')}
+            />
             <Box padding={2}>
               <Label muted size={1}>
                 Replace

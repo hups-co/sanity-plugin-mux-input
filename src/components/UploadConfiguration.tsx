@@ -1,8 +1,8 @@
 import {DocumentVideoIcon, UploadIcon} from '@sanity/icons'
-import {Box, Button, Card, Checkbox, Dialog, Flex, Label, Radio, Stack, Text} from '@sanity/ui'
+import {Box, Button, Card, Checkbox, Dialog, Flex, Label, Radio, Stack, Text, TextInput} from '@sanity/ui'
 import {uuid} from '@sanity/uuid'
 import LanguagesList from 'iso-639-1'
-import {useEffect, useId, useReducer, useRef} from 'react'
+import {useEffect, useId, useReducer, useRef, useState} from 'react'
 import {FormField} from 'sanity'
 
 import formatBytes from '../util/formatBytes'
@@ -56,7 +56,7 @@ export default function UploadConfiguration({
   stagedUpload: StagedUpload
   secrets: Secrets
   pluginConfig: PluginConfig
-  startUpload: (settings: MuxNewAssetSettings) => void
+  startUpload: (settings: MuxNewAssetSettings, filename?: string) => void
   onClose: () => void
 }) {
   const id = useId()
@@ -140,14 +140,16 @@ export default function UploadConfiguration({
       text_tracks: autoTextTracks,
     } as UploadConfig
   )
+  const [filename, setFilename] = useState(stagedUpload.type === 'file' ? stagedUpload.files[0].name : undefined)
 
-  // If user-provided config is disabled, begin the upload immediately with
+  // If user-provided config is disabled,
+  // begin the upload immediately with
   // the developer-specified values from the schema or config or defaults.
   // This can include auto-generated subtitles!
   const {disableTextTrackConfig, disableUploadConfig} = pluginConfig
   const skipConfig = disableTextTrackConfig && disableUploadConfig
   useEffect(() => {
-    if (skipConfig) startUpload(formatUploadConfig(config))
+    if (skipConfig) startUpload(formatUploadConfig(config), filename)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   if (skipConfig) return null
@@ -177,9 +179,14 @@ export default function UploadConfiguration({
           <Flex gap={2}>
             <DocumentVideoIcon fontSize="2em" />
             <Stack space={2}>
-              <Text textOverflow="ellipsis" as="h2" size={3}>
-                {stagedUpload.type === 'file' ? stagedUpload.files[0].name : stagedUpload.url}
-              </Text>
+              {stagedUpload.type === 'file' ? (
+                <TextInput value={filename}
+                           onChange={(event) => setFilename(event.currentTarget.value)
+                }/>)
+                : (<Text textOverflow="ellipsis" as="h2" size={3}>
+              {stagedUpload.url}
+            </Text>)}
+
               <Text as="p" size={1} muted>
                 {stagedUpload.type === 'file'
                   ? `Direct File Upload (${formatBytes(stagedUpload.files[0].size)})`
@@ -343,7 +350,7 @@ export default function UploadConfiguration({
             icon={UploadIcon}
             text="Upload"
             tone="positive"
-            onClick={() => startUpload(formatUploadConfig(config))}
+            onClick={() => startUpload(formatUploadConfig(config), filename)}
           />
         </Box>
       </Stack>

@@ -79,12 +79,14 @@ export function uploadFile({
   settings,
   client,
   file,
+  filename = file.name
 }: {
   settings: MuxNewAssetSettings
   client: SanityClient
   file: File
+  filename?: string
 }) {
-  return testFile(file).pipe(
+  return testFile(file, filename).pipe(
     switchMap((fileOptions) => {
       return concat(
         of({type: 'file' as const, file: fileOptions}),
@@ -129,7 +131,7 @@ export function uploadFile({
                       if (event.type !== 'success') {
                         return of(event)
                       }
-                      return from(updateAssetDocumentFromUpload(client, uuid)).pipe(
+                      return from(updateAssetDocumentFromUpload(client, uuid, filename)).pipe(
                         // eslint-disable-next-line max-nested-callbacks
                         mergeMap((doc) => of({...event, asset: doc}))
                       )
@@ -201,7 +203,7 @@ function pollUpload(client: SanityClient, uuid: string): Promise<UploadResponse>
   })
 }
 
-async function updateAssetDocumentFromUpload(client: SanityClient, uuid: string) {
+async function updateAssetDocumentFromUpload(client: SanityClient, uuid: string, filename: string) {
   let upload: UploadResponse
   let asset: {data: MuxAsset}
   try {
@@ -223,15 +225,16 @@ async function updateAssetDocumentFromUpload(client: SanityClient, uuid: string)
     assetId: asset.data.id,
     playbackId: asset.data.playback_ids[0].id,
     uploadId: upload.data.id,
+    filename: filename,
   }
   return client.createOrReplace(doc).then(() => {
     return doc
   })
 }
 
-export function testFile(file: File) {
+export function testFile(file: File, filename: string) {
   if (typeof window !== 'undefined' && file instanceof window.File) {
-    const fileOptions = optionsFromFile({}, file)
+    const fileOptions = optionsFromFile({}, file, filename)
     return of(fileOptions)
   }
   return throwError(new Error('Invalid file'))
@@ -254,12 +257,12 @@ export function testUrl(url: string): Observable<string> {
   return of(url)
 }
 
-function optionsFromFile(opts: {preserveFilename?: boolean}, file: File) {
+function optionsFromFile(opts: {preserveFilename?: boolean}, file: File, filename?:string) {
   if (typeof window === 'undefined' || !(file instanceof window.File)) {
     return undefined
   }
   return {
-    name: opts.preserveFilename === false ? undefined : file.name,
+    name: opts.preserveFilename === false ? undefined : (filename ?? file.name),
     type: file.type,
   }
 }
