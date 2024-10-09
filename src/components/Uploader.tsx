@@ -24,9 +24,7 @@ import UploadConfiguration from './UploadConfiguration'
 import {UploadCard} from './Uploader.styled'
 import UploadPlaceholder from './UploadPlaceholder'
 import {UploadProgress} from './UploadProgress'
-import FileNameForm from './FileNameForm'
 import VideoDetails from './VideoDetails/VideoDetails'
-import FormField from './FormField'
 
 interface Props extends Pick<MuxInputProps, 'onChange' | 'readOnly'> {
   config: PluginConfig
